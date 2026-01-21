@@ -92,7 +92,7 @@ export default class TaskAsNotePlugin extends Plugin {
 
         const fileCache = this.app.metadataCache.getFileCache(file);
 
-        if (!(fileCache?.frontmatter?.tags ?? []).includes('task')) {
+        if (!(fileCache?.frontmatter?.tags ?? []).includes('goal')) {
           return;
         }
 
@@ -101,9 +101,15 @@ export default class TaskAsNotePlugin extends Plugin {
         // update file properties
 
         this.app.fileManager.processFrontMatter(file, (frontmatter) => {
+          const completedTasks = fileCache?.listItems?.filter((i) => i.task === 'x').length ?? 0;
+          const uncompletedTasks = fileCache?.listItems?.filter((i) => i.task === ' ').length ?? 0;
+          const totalTasks = completedTasks + uncompletedTasks;
+          
           frontmatter.progress = {
-            completed: fileCache?.listItems?.filter((i) => i.task === 'x').length ?? 0,
-            total: fileCache?.listItems?.filter((i) => i.task === ' ').length ?? 0,
+            completed: completedTasks,
+            total: totalTasks,
+            remaining: uncompletedTasks,
+            // percentage: totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
           };
         });
       }));

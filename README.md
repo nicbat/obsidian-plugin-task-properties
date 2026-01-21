@@ -1,3 +1,5 @@
+Modified to use the `#goal` tag instead.
+
 # Obsidian Task Properties Plugin
 
 This is an Obsidian plugin that syncs task statuses into note properties.
