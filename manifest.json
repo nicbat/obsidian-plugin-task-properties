@@ -4,8 +4,7 @@
   "version": "0.0.1",
   "minAppVersion": "1.9.0",
   "description": "An Obsidian plugin that syncs task statuses into note properties.",
-  "author": "Simon Liang",
-  "authorUrl": "https://divby0.io",
-  "fundingUrl": "https://github.com/sponsors/lhr0909",
+  "author": "Nicholas Batchelder",
+  "authorUrl": "https://nicb.at",
   "isDesktopOnly": false
 }
