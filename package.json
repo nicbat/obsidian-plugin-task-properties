@@ -1,6 +1,6 @@
 {
   "name": "obsidian-plugin-task-properties",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "An Obsidian plugin that syncs task statuses into note properties.",
   "main": "main.js",
   "scripts": {
