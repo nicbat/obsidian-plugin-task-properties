@@ -4,6 +4,7 @@ export interface Progress {
   completed: number;
   total: number;
   remaining: number;
+  percentage?: number;
 }
 
 /**
@@ -12,12 +13,23 @@ export interface Progress {
  * Obsidian stores a task's checked status in `listItem.task` as a single
  * character: `' '` is incomplete and any other character (`x`, `X`, `/`, `-`,
  * ...) is complete. `undefined` means the list item is not a task at all.
+ * All tasks count regardless of nesting depth.
+ *
+ * When `includePercentage` is set, a `percentage` field (0–100, rounded) is
+ * added; it is `0` when the note has no tasks.
  */
-export function computeProgress(cache: CachedMetadata): Progress {
+export function computeProgress(
+  cache: CachedMetadata,
+  includePercentage = false
+): Progress {
   const tasks = (cache.listItems ?? []).filter((i) => i.task !== undefined);
   const completed = tasks.filter((i) => i.task !== ' ').length;
   const total = tasks.length;
-  return { completed, total, remaining: total - completed };
+  const progress: Progress = { completed, total, remaining: total - completed };
+  if (includePercentage) {
+    progress.percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+  }
+  return progress;
 }
 
 function normalizeTag(tag: string): string {
@@ -32,18 +44,24 @@ export function noteHasAnyTag(cache: CachedMetadata, tags: string[]): boolean {
   if (tags.length === 0) {
     return false;
   }
-  const wanted = new Set(tags.map(normalizeTag));
+  const wanted = new Set(tags.map(normalizeTag).filter((t) => t.length > 0));
+  if (wanted.size === 0) {
+    return false;
+  }
   const fileTags = (getAllTags(cache) ?? []).map(normalizeTag);
   return fileTags.some((t) => wanted.has(t));
 }
 
 /** Structural equality used to skip redundant frontmatter writes. */
 export function progressEquals(a: unknown, b: Progress): boolean {
+  if (!a || typeof a !== 'object') {
+    return false;
+  }
+  const p = a as Progress;
   return (
-    !!a &&
-    typeof a === 'object' &&
-    (a as Progress).completed === b.completed &&
-    (a as Progress).total === b.total &&
-    (a as Progress).remaining === b.remaining
+    p.completed === b.completed &&
+    p.total === b.total &&
+    p.remaining === b.remaining &&
+    p.percentage === b.percentage
   );
 }

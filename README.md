@@ -17,7 +17,7 @@ Obsidian v1.9.0 adds Bases feature, which is a powerful way to organize your not
 
 ## Configuration
 
-Open **Settings → Task Properties** and set **Trigger tags** to a comma-separated list (default: `goal`). Notes tagged with any of these get a `progress` property. The `#` prefix is optional, e.g. `goal, task, project`.
+Open **Settings → Task Properties** and manage your **Trigger tags** (default: `goal`). Use **Add tag** to add a tag and the trash icon to remove one. Notes tagged with any of these get a `progress` property. The `#` prefix is optional.
 
 ## Note
 
