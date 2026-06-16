@@ -25,13 +25,20 @@ jobs:
           npm run build
 
       - name: Create release
-        if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
+          # Derive the version from manifest.json so this works whether triggered
+          # by a tag push or a manual workflow_dispatch.
+          version="$(jq -r .version manifest.json)"
 
-          gh release create "$tag" \
-            --title="$tag" \
-            --draft \
-            main.js manifest.json styles.css
+          if gh release view "$version" >/dev/null 2>&1; then
+            echo "Release $version exists; updating assets."
+            gh release upload "$version" \
+              main.js manifest.json styles.css --clobber
+          else
+            gh release create "$version" \
+              --title="$version" \
+              --draft \
+              main.js manifest.json styles.css
+          fi
